@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>HI-MAPF — Detailed Results</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3273dc;
+      --himapf: #1a1a2e;
+      --scrimp: #e74c3c;
+      --dcc: #f39c12;
+      --gpt: #3498db;
+      --eph: #2ecc71;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --border: #e9ecef;
+      --text: #2c3e50;
+      --text-secondary: #6c757d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+    }
+
+    /* Hero */
+    .hero-bg {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white;
+    }
+
+    .hero-bg .subtitle {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Cards */
+    .map-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+      transition: box-shadow 0.2s;
+    }
+
+    .map-card:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .map-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .map-header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+
+    .map-header h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .map-header .map-desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Tables */
+    .results-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.82rem;
+      overflow-x: auto;
+    }
+
+    .results-table thead th {
+      background: #f1f3f5;
+      color: var(--text);
+      font-weight: 600;
+      padding: 0.6rem 0.5rem;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+
+    .results-table thead th.col-agents {
+      background: #e9ecef;
+      font-weight: 700;
+    }
+
+    .results-table thead th.col-himapf {
+      background: rgba(26, 26, 46, 0.08);
+      color: var(--himapf);
+    }
+
+    .results-table thead th.col-scrimp {
+      border-top: 3px solid var(--scrimp);
+    }
+
+    .results-table thead th.col-dcc {
+      border-top: 3px solid var(--dcc);
+    }
+
+    .results-table thead th.col-gpt {
+      border-top: 3px solid var(--gpt);
+    }
+
+    .results-table thead th.col-eph {
+      border-top: 3px solid var(--eph);
+    }
+
+    .results-table thead th.col-himapf {
+      border-top: 3px solid var(--himapf);
+    }
+
+    /* Group headers */
+    .results-table thead .alg-group th {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    .results-table thead .alg-group .g-scrimp {
+      color: var(--scrimp);
+      background: rgba(231, 76, 60, 0.05);
+    }
+
+    .results-table thead .alg-group .g-dcc {
+      color: var(--dcc);
+      background: rgba(243, 156, 18, 0.05);
+    }
+
+    .results-table thead .alg-group .g-gpt {
+      color: var(--gpt);
+      background: rgba(52, 152, 219, 0.05);
+    }
+
+    .results-table thead .alg-group .g-eph {
+      color: var(--eph);
+      background: rgba(46, 204, 113, 0.05);
+    }
+
+    .results-table thead .alg-group .g-himapf {
+      color: var(--himapf);
+      background: rgba(26, 26, 46, 0.08);
+      font-size: 0.9rem;
+    }
+
+    .results-table tbody td {
+      padding: 0.5rem 0.4rem;
+      text-align: center;
+      border-bottom: 1px solid #f1f3f5;
+      white-space: nowrap;
+    }
+
+    .results-table tbody tr:hover td {
+      background: #f8f9ff;
+    }
+
+    .results-table tbody td.agents-col {
+      font-weight: 700;
+      background: #f8f9fa;
+      color: var(--text);
+    }
+
+    .results-table tbody td.himapf-col {
+      background: rgba(26, 26, 46, 0.03);
+      font-weight: 600;
+    }
+
+    td.best-sr {
+      color: #27ae60;
+      font-weight: 600;
+    }
+
+    td.best-iu {
+      color: var(--himapf);
+      font-weight: 700;
+    }
+
+    td.zero-sr {
+      color: #ccc;
+    }
+
+    td.na-val {
+      color: #ccc;
+      font-style: italic;
+    }
+
+    /* Button */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+    }
+
+    /* Hardware section */
+    .hw-image {
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      max-width: 100%;
+    }
+
+    /* Scrollable table wrapper */
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 0.8rem 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .section-divider {
+      text-align: center;
+      margin: 2.5rem 0;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      display: inline-block;
+      width: 60px;
+      height: 1px;
+      background: var(--border);
+      vertical-align: middle;
+      margin: 0 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <section class="hero hero-bg is-small">
+    <div class="hero-body">
+      <div class="container" style="max-width:1100px;">
+        <h1 class="title has-text-white" style="font-size:1.6rem;">HI-MAPF — Detailed Experimental Results</h1>
+        <p class="subtitle">Simulation benchmarks across 4 map families &amp; hardware validation on TurtleBot4.</p>
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Paper</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:1100px;">
+
+      <!-- Legend -->
+      <div class="legend">
+        <span style="font-weight:600;">Columns:</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--scrimp)"></span> SCRIMP</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--dcc)"></span> DCC</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--gpt)"></span> MAPF-GPT-2M</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--eph)"></span> EPH</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--himapf)"></span> <strong>HI-MAPF
+            (ours)</strong></span>
+        <span style="margin-left:auto; color:var(--text-secondary);">SR↑ = Success Rate (%), MS↓ = Makespan, IU↓ =
+          Information Units</span>
+      </div>
+
+      <!-- ==================== random-32-32-20 ==================== -->
+      <div class="map-card">
+        <div class="map-header">
+          <img src="images/random-32-32-20.png" alt="random-32-32-20">
+          <div>
+            <h3>random-32-32-20</h3>
+            <div class="map-desc">32×32 grid · 20% obstacles · 10–128 agents</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr class="alg-group">
+                <th rowspan="2" class="col-agents" style="min-width:55px;">Agents</th>
+                <th colspan="3" class="g-scrimp">SCRIMP</th>
+                <th colspan="3" class="g-dcc">DCC</th>
+                <th colspan="3" class="g-gpt">MAPF-GPT-2M</th>
+                <th colspan="3" class="g-eph">EPH</th>
+                <th colspan="3" class="g-himapf">HI-MAPF ★</th>
+              </tr>
+              <tr>
+                <th class="col-scrimp">SR</th>
+                <th class="col-scrimp">MS</th>
+                <th class="col-scrimp">IU</th>
+                <th class="col-dcc">SR</th>
+                <th class="col-dcc">MS</th>
+                <th class="col-dcc">IU</th>
+                <th class="col-gpt">SR</th>
+                <th class="col-gpt">MS</th>
+                <th class="col-gpt">IU</th>
+                <th class="col-eph">SR</th>
+                <th class="col-eph">MS</th>
+                <th class="col-eph">IU</th>
+                <th class="col-himapf">SR</th>
+                <th class="col-himapf">MS</th>
+                <th class="col-himapf">IU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="agents-col">10</td>
+                <td>100</td>
+                <td>48.0</td>
+                <td>262.2</td>
+                <td>100</td>
+                <td>49.1</td>
+                <td>26.1</td>
+                <td>100</td>
+                <td>49.2</td>
+                <td>510.8</td>
+                <td>100</td>
+                <td>47.6</td>
+                <td>19.7</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">50.5</td>
+                <td class="himapf-col best-iu">3.6</td>
+              </tr>
+              <tr>
+                <td class="agents-col">20</td>
+                <td>100</td>
+                <td>50.5</td>
+                <td>565.2</td>
+                <td>100</td>
+                <td>58.0</td>
+                <td>211.2</td>
+                <td>100</td>
+                <td>53.8</td>
+                <td>2571.8</td>
+                <td>95</td>
+                <td>62.5</td>
+                <td>204.2</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">56.0</td>
+                <td class="himapf-col best-iu">18.8</td>
+              </tr>
+              <tr>
+                <td class="agents-col">30</td>
+                <td>100</td>
+                <td>52.4</td>
+                <td>884.8</td>
+                <td>100</td>
+                <td>59.5</td>
+                <td>696.2</td>
+                <td>100</td>
+                <td>53.9</td>
+                <td>5410.6</td>
+                <td>100</td>
+                <td>62.0</td>
+                <td>576.8</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">55.5</td>
+                <td class="himapf-col best-iu">66.3</td>
+              </tr>
+              <tr>
+                <td class="agents-col">40</td>
+                <td>95</td>
+                <td>58.0</td>
+                <td>1377.7</td>
+                <td>95</td>
+                <td>72.8</td>
+                <td>1407.0</td>
+                <td>100</td>
+                <td>57.2</td>
+                <td>10023.4</td>
+                <td>100</td>
+                <td>64.5</td>
+                <td>1403.0</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">107.0</td>
+                <td class="himapf-col best-iu">48.8</td>
+              </tr>
+              <tr>
+                <td class="agents-col">50</td>
+                <td>100</td>
+                <td>56.8</td>
+                <td>1645.2</td>
+                <td>90</td>
+                <td>81.7</td>
+                <td>3356.1</td>
+                <td>100</td>
+                <td>58.9</td>
+                <td>16817.5</td>
+                <td>95</td>
+                <td>79.0</td>
+                <td>3183.2</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">61.4</td>
+                <td class="himapf-col best-iu">221.4</td>
+              </tr>
+              <tr>
+                <td class="agents-col">60</td>
+                <td>90</td>
+                <td>71.4</td>
+                <td>2822.8</td>
+                <td>70</td>
+                <td>92.0</td>
+                <td>6337.2</td>
+                <td>100</td>
+                <td>63.0</td>
+                <td>25789.6</td>
+                <td>95</td>
+                <td>88.7</td>
+                <td>6155.1</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">128.2</td>
+                <td class="himapf-col best-iu">214.2</td>
+              </tr>
+              <tr>
+                <td class="agents-col">70</td>
+                <td>90</td>
+                <td>70.5</td>
+                <td>3158.8</td>
+                <td>60</td>
+                <td>104.5</td>
+                <td>10385.0</td>
+                <td>100</td>
+                <td>68.2</td>
+                <td>37317.4</td>
+                <td>65</td>
+                <td>110.7</td>
+                <td>11735.3</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">65.5</td>
+                <td class="himapf-col best-iu">2158.2</td>
+              </tr>
+              <tr>
+                <td class="agents-col">80</td>
+                <td>80</td>
+                <td>83.8</td>
+                <td>4660.8</td>
+                <td>60</td>
+                <td>111.7</td>
+                <td>17196.1</td>
+                <td>100</td>
+                <td>72.9</td>
+                <td>52094.2</td>
+                <td>70</td>
+                <td>108.9</td>
+                <td>20330.8</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">71.8</td>
+                <td class="himapf-col best-iu">1405.5</td>
+              </tr>
+              <tr>
+                <td class="agents-col">90</td>
+                <td>60</td>
+                <td>96.9</td>
+                <td>6292.6</td>
+                <td>30</td>
+                <td>117.8</td>
+                <td>29474.4</td>
+                <td>100</td>
+                <td>70.0</td>
+                <td>65378.0</td>
+                <td>25</td>
+                <td>123.8</td>
+                <td>36040.6</td>
+                <td class="himapf-col">95</td>
+                <td class="himapf-col">82.8</td>
+                <td class="himapf-col best-iu">1950.7</td>
+              </tr>
+              <tr>
+                <td class="agents-col">100</td>
+                <td>60</td>
+                <td>97.2</td>
+                <td>6982.9</td>
+                <td>40</td>
+                <td>117.5</td>
+                <td>37877.7</td>
+                <td>100</td>
+                <td>77.0</td>
+                <td>84993.4</td>
+                <td>50</td>
+                <td>121.0</td>
+                <td>41383.7</td>
+                <td class="himapf-col">85</td>
+                <td class="himapf-col">76.5</td>
+                <td class="himapf-col best-iu">3693.9</td>
+              </tr>
+              <tr>
+                <td class="agents-col">128</td>
+                <td>70</td>
+                <td>96.6</td>
+                <td>8615.5</td>
+                <td class="zero-sr">0</td>
+                <td>127.0</td>
+                <td>94612.2</td>
+                <td>90</td>
+                <td>94.1</td>
+                <td>167878.4</td>
+                <td>5</td>
+                <td>127.5</td>
+                <td>129548.7</td>
+                <td class="himapf-col zero-sr">0</td>
+                <td class="himapf-col na-val">—</td>
+                <td class="himapf-col na-val">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== random-64-64-20 ==================== -->
+      <div class="map-card">
+        <div class="map-header">
+          <img src="images/random-64-64-20.png" alt="random-64-64-20">
+          <div>
+            <h3>random-64-64-20</h3>
+            <div class="map-desc">64×64 grid · 20% obstacles · 10–128 agents</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr class="alg-group">
+                <th rowspan="2" class="col-agents">Agents</th>
+                <th colspan="3" class="g-scrimp">SCRIMP</th>
+                <th colspan="3" class="g-dcc">DCC</th>
+                <th colspan="3" class="g-gpt">MAPF-GPT-2M</th>
+                <th colspan="3" class="g-eph">EPH</th>
+                <th colspan="3" class="g-himapf">HI-MAPF ★</th>
+              </tr>
+              <tr>
+                <th class="col-scrimp">SR</th>
+                <th class="col-scrimp">MS</th>
+                <th class="col-scrimp">IU</th>
+                <th class="col-dcc">SR</th>
+                <th class="col-dcc">MS</th>
+                <th class="col-dcc">IU</th>
+                <th class="col-gpt">SR</th>
+                <th class="col-gpt">MS</th>
+                <th class="col-gpt">IU</th>
+                <th class="col-eph">SR</th>
+                <th class="col-eph">MS</th>
+                <th class="col-eph">IU</th>
+                <th class="col-himapf">SR</th>
+                <th class="col-himapf">MS</th>
+                <th class="col-himapf">IU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="agents-col">10</td>
+                <td>50</td>
+                <td>112.5</td>
+                <td>612.1</td>
+                <td>100</td>
+                <td>97.7</td>
+                <td>10.6</td>
+                <td>100</td>
+                <td>99.6</td>
+                <td>314.8</td>
+                <td>95</td>
+                <td>97.3</td>
+                <td>7.8</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">108.0</td>
+                <td class="himapf-col best-iu">0.9</td>
+              </tr>
+              <tr>
+                <td class="agents-col">20</td>
+                <td>10</td>
+                <td>126.5</td>
+                <td>1382.0</td>
+                <td>100</td>
+                <td>107.8</td>
+                <td>59.4</td>
+                <td>100</td>
+                <td>110.2</td>
+                <td>1432.2</td>
+                <td>100</td>
+                <td>105.7</td>
+                <td>47.8</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">115.6</td>
+                <td class="himapf-col best-iu">6.2</td>
+              </tr>
+              <tr>
+                <td class="agents-col">30</td>
+                <td>10</td>
+                <td>126.7</td>
+                <td>2190.3</td>
+                <td>90</td>
+                <td>112.2</td>
+                <td>172.2</td>
+                <td>100</td>
+                <td>111.7</td>
+                <td>3440.9</td>
+                <td>100</td>
+                <td>109.5</td>
+                <td>141.8</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">118.2</td>
+                <td class="himapf-col best-iu">23.4</td>
+              </tr>
+              <tr>
+                <td class="agents-col">40</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>2912.6</td>
+                <td>100</td>
+                <td>112.8</td>
+                <td>382.4</td>
+                <td>100</td>
+                <td>112.7</td>
+                <td>6165.6</td>
+                <td>100</td>
+                <td>112.3</td>
+                <td>328.9</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">122.6</td>
+                <td class="himapf-col best-iu">45.0</td>
+              </tr>
+              <tr>
+                <td class="agents-col">50</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>3668.7</td>
+                <td>85</td>
+                <td>116.8</td>
+                <td>889.7</td>
+                <td>100</td>
+                <td>115.2</td>
+                <td>9882.4</td>
+                <td>100</td>
+                <td>113.8</td>
+                <td>638.0</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">124.0</td>
+                <td class="himapf-col best-iu">109.8</td>
+              </tr>
+              <tr>
+                <td class="agents-col">60</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>4454.6</td>
+                <td>65</td>
+                <td>120.8</td>
+                <td>1258.0</td>
+                <td>85</td>
+                <td>117.7</td>
+                <td>14413.4</td>
+                <td>95</td>
+                <td>116.1</td>
+                <td>964.6</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">130.2</td>
+                <td class="himapf-col best-iu">110.8</td>
+              </tr>
+              <tr>
+                <td class="agents-col">70</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>5275.4</td>
+                <td>50</td>
+                <td>123.5</td>
+                <td>1823.1</td>
+                <td>95</td>
+                <td>118.7</td>
+                <td>20501.5</td>
+                <td>85</td>
+                <td>120.8</td>
+                <td>1640.2</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">128.2</td>
+                <td class="himapf-col best-iu">183.0</td>
+              </tr>
+              <tr>
+                <td class="agents-col">80</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>5860.5</td>
+                <td>20</td>
+                <td>126.8</td>
+                <td>2947.4</td>
+                <td>95</td>
+                <td>121.0</td>
+                <td>26414.2</td>
+                <td>90</td>
+                <td>120.2</td>
+                <td>2520.7</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">128.7</td>
+                <td class="himapf-col best-iu">211.9</td>
+              </tr>
+              <tr>
+                <td class="agents-col">90</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>6649.9</td>
+                <td>60</td>
+                <td>124.6</td>
+                <td>4095.8</td>
+                <td>75</td>
+                <td>121.3</td>
+                <td>34021.6</td>
+                <td>80</td>
+                <td>122.2</td>
+                <td>3187.4</td>
+                <td class="himapf-col">95</td>
+                <td class="himapf-col">130.4</td>
+                <td class="himapf-col best-iu">243.6</td>
+              </tr>
+              <tr>
+                <td class="agents-col">100</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>7296.5</td>
+                <td>25</td>
+                <td>127.2</td>
+                <td>6134.2</td>
+                <td>75</td>
+                <td>123.8</td>
+                <td>42306.8</td>
+                <td>45</td>
+                <td>125.3</td>
+                <td>5290.0</td>
+                <td class="himapf-col">90</td>
+                <td class="himapf-col">130.1</td>
+                <td class="himapf-col best-iu">472.9</td>
+              </tr>
+              <tr>
+                <td class="agents-col">128</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>9213.7</td>
+                <td class="zero-sr">0</td>
+                <td>128.0</td>
+                <td>13053.0</td>
+                <td>55</td>
+                <td>126.2</td>
+                <td>70208.3</td>
+                <td>15</td>
+                <td>127.7</td>
+                <td>12250.5</td>
+                <td class="himapf-col">5</td>
+                <td class="himapf-col">132.0</td>
+                <td class="himapf-col best-iu">530.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== den312d ==================== -->
+      <div class="map-card">
+        <div class="map-header">
+          <img src="images/den312d.png" alt="den312d">
+          <div>
+            <h3>den312d</h3>
+            <div class="map-desc">Structured office-style map (65×81) · 8–128 agents</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr class="alg-group">
+                <th rowspan="2" class="col-agents">Agents</th>
+                <th colspan="3" class="g-scrimp">SCRIMP</th>
+                <th colspan="3" class="g-dcc">DCC</th>
+                <th colspan="3" class="g-gpt">MAPF-GPT-2M</th>
+                <th colspan="3" class="g-eph">EPH</th>
+                <th colspan="3" class="g-himapf">HI-MAPF ★</th>
+              </tr>
+              <tr>
+                <th class="col-scrimp">SR</th>
+                <th class="col-scrimp">MS</th>
+                <th class="col-scrimp">IU</th>
+                <th class="col-dcc">SR</th>
+                <th class="col-dcc">MS</th>
+                <th class="col-dcc">IU</th>
+                <th class="col-gpt">SR</th>
+                <th class="col-gpt">MS</th>
+                <th class="col-gpt">IU</th>
+                <th class="col-eph">SR</th>
+                <th class="col-eph">MS</th>
+                <th class="col-eph">IU</th>
+                <th class="col-himapf">SR</th>
+                <th class="col-himapf">MS</th>
+                <th class="col-himapf">IU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="agents-col">8</td>
+                <td>20</td>
+                <td>226.2</td>
+                <td>1156.7</td>
+                <td>100</td>
+                <td>114.2</td>
+                <td>22.6</td>
+                <td>100</td>
+                <td>114.0</td>
+                <td>300.0</td>
+                <td>100</td>
+                <td>111.9</td>
+                <td>13.0</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">115.3</td>
+                <td class="himapf-col best-iu">3.6</td>
+              </tr>
+              <tr>
+                <td class="agents-col">16</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>2629.9</td>
+                <td>100</td>
+                <td>130.7</td>
+                <td>191.3</td>
+                <td>100</td>
+                <td>120.9</td>
+                <td>1464.8</td>
+                <td>100</td>
+                <td>122.2</td>
+                <td>128.4</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">124.0</td>
+                <td class="himapf-col best-iu">21.8</td>
+              </tr>
+              <tr>
+                <td class="agents-col">32</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>5292.6</td>
+                <td>85</td>
+                <td>163.5</td>
+                <td>1195.6</td>
+                <td>100</td>
+                <td>126.4</td>
+                <td>6425.6</td>
+                <td>100</td>
+                <td>127.0</td>
+                <td>627.5</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">136.7</td>
+                <td class="himapf-col best-iu">105.2</td>
+              </tr>
+              <tr>
+                <td class="agents-col">64</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>10960.8</td>
+                <td>90</td>
+                <td>190.7</td>
+                <td>8180.1</td>
+                <td>100</td>
+                <td>137.8</td>
+                <td>27326.8</td>
+                <td>100</td>
+                <td>146.1</td>
+                <td>6722.3</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">153.1</td>
+                <td class="himapf-col best-iu">759.9</td>
+              </tr>
+              <tr>
+                <td class="agents-col">128</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>14090.8</td>
+                <td>5</td>
+                <td>254.8</td>
+                <td>112519.4</td>
+                <td>35</td>
+                <td>234.0</td>
+                <td>320115.9</td>
+                <td>90</td>
+                <td>207.7</td>
+                <td>77108.9</td>
+                <td class="himapf-col zero-sr">0</td>
+                <td class="himapf-col na-val">—</td>
+                <td class="himapf-col na-val">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== warehouse ==================== -->
+      <div class="map-card">
+        <div class="map-header">
+          <img src="images/warehouse.png" alt="warehouse">
+          <div>
+            <h3>warehouse</h3>
+            <div class="map-desc">Structured warehouse map (161×63) · 8–128 agents</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr class="alg-group">
+                <th rowspan="2" class="col-agents">Agents</th>
+                <th colspan="3" class="g-scrimp">SCRIMP</th>
+                <th colspan="3" class="g-dcc">DCC</th>
+                <th colspan="3" class="g-gpt">MAPF-GPT-2M</th>
+                <th colspan="3" class="g-eph">EPH</th>
+                <th colspan="3" class="g-himapf">HI-MAPF ★</th>
+              </tr>
+              <tr>
+                <th class="col-scrimp">SR</th>
+                <th class="col-scrimp">MS</th>
+                <th class="col-scrimp">IU</th>
+                <th class="col-dcc">SR</th>
+                <th class="col-dcc">MS</th>
+                <th class="col-dcc">IU</th>
+                <th class="col-gpt">SR</th>
+                <th class="col-gpt">MS</th>
+                <th class="col-gpt">IU</th>
+                <th class="col-eph">SR</th>
+                <th class="col-eph">MS</th>
+                <th class="col-eph">IU</th>
+                <th class="col-himapf">SR</th>
+                <th class="col-himapf">MS</th>
+                <th class="col-himapf">IU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="agents-col">8</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>997.6</td>
+                <td>100</td>
+                <td>191.8</td>
+                <td>4.3</td>
+                <td>100</td>
+                <td>193.6</td>
+                <td>107.0</td>
+                <td>100</td>
+                <td>191.6</td>
+                <td>1.7</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">192.8</td>
+                <td class="himapf-col best-iu">0.8</td>
+              </tr>
+              <tr>
+                <td class="agents-col">16</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>1729.3</td>
+                <td>100</td>
+                <td>213.3</td>
+                <td>15.6</td>
+                <td>100</td>
+                <td>214.0</td>
+                <td>509.6</td>
+                <td>100</td>
+                <td>212.9</td>
+                <td>11.1</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">215.1</td>
+                <td class="himapf-col best-iu">1.0</td>
+              </tr>
+              <tr>
+                <td class="agents-col">32</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>3575.1</td>
+                <td>100</td>
+                <td>219.2</td>
+                <td>89.0</td>
+                <td>100</td>
+                <td>221.8</td>
+                <td>2303.8</td>
+                <td>100</td>
+                <td>218.1</td>
+                <td>57.7</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">220.3</td>
+                <td class="himapf-col best-iu">10.7</td>
+              </tr>
+              <tr>
+                <td class="agents-col">64</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>7262.5</td>
+                <td>100</td>
+                <td>227.6</td>
+                <td>356.9</td>
+                <td>100</td>
+                <td>229.3</td>
+                <td>9468.8</td>
+                <td>100</td>
+                <td>227.8</td>
+                <td>265.1</td>
+                <td class="himapf-col">100</td>
+                <td class="himapf-col">227.6</td>
+                <td class="himapf-col best-iu">23.6</td>
+              </tr>
+              <tr>
+                <td class="agents-col">128</td>
+                <td class="zero-sr">0</td>
+                <td>256.0</td>
+                <td>9408.9</td>
+                <td>95</td>
+                <td>236.8</td>
+                <td>2016.5</td>
+                <td>95</td>
+                <td>237.2</td>
+                <td>38508.6</td>
+                <td>90</td>
+                <td>239.1</td>
+                <td>1502.4</td>
+                <td class="himapf-col best-sr">100</td>
+                <td class="himapf-col">234.7</td>
+                <td class="himapf-col best-iu">139.1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== DIVIDER ==================== -->
+      <div class="section-divider">Hardware Validation &mdash; TurtleBot4 (5 Agents)</div>
+
+      <!-- Robot setup image -->
+      <div class="map-card">
+        <div class="map-header">
+          <img src="images/robot_setup.jpg" alt="TurtleBot4 Setup" style="width:80px;height:80px;">
+          <div>
+            <h3>Hardware Setup &amp; Test Maps</h3>
+            <div class="map-desc">6×6 physical grid · ROS 2 · 5 TurtleBot4 robots · Event-triggered alert protocol</div>
+          </div>
+        </div>
+        <div class="columns is-centered" style="margin-bottom:0.5rem;">
+          <div class="column is-8 has-text-centered">
+            <img src="images/robo_tests.png" alt="Hardware test maps" class="hw-image">
+            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:0.5rem;">5 test scenarios with
+              different start-goal configurations for 5 robots.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-test planning results -->
+      <div class="map-card">
+        <div class="map-header">
+          <div>
+            <h3>Per-Test Planning Results</h3>
+            <div class="map-desc">Planning-level metrics from each algorithm's planner (before physical execution)</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr class="alg-group">
+                <th rowspan="2" class="col-agents" style="min-width:55px;">Test</th>
+                <th colspan="2" class="g-himapf">HI-MAPF ★</th>
+                <th colspan="2" class="g-gpt">MAPF-GPT-2M</th>
+                <th colspan="2" class="g-dcc">DCC</th>
+                <th colspan="2" class="g-eph">EPH</th>
+              </tr>
+              <tr>
+                <th class="col-himapf">MS</th>
+                <th class="col-himapf">IU</th>
+                <th class="col-gpt">MS</th>
+                <th class="col-gpt">IU</th>
+                <th class="col-dcc">MS</th>
+                <th class="col-dcc">IU</th>
+                <th class="col-eph">MS</th>
+                <th class="col-eph">IU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="agents-col">Test 1</td>
+                <td class="himapf-col">12</td>
+                <td class="himapf-col best-iu">189</td>
+                <td>14</td>
+                <td>480</td>
+                <td>19</td>
+                <td>543</td>
+                <td>17</td>
+                <td>395</td>
+              </tr>
+              <tr>
+                <td class="agents-col">Test 2</td>
+                <td class="himapf-col">10</td>
+                <td class="himapf-col best-iu">195</td>
+                <td>10</td>
+                <td>335</td>
+                <td>22</td>
+                <td>491</td>
+                <td>12</td>
+                <td>223</td>
+              </tr>
+              <tr>
+                <td class="agents-col">Test 3</td>
+                <td class="himapf-col">14</td>
+                <td class="himapf-col best-iu">210</td>
+                <td>17</td>
+                <td>575</td>
+                <td>17</td>
+                <td>347</td>
+                <td>22</td>
+                <td>496</td>
+              </tr>
+              <tr>
+                <td class="agents-col">Test 4</td>
+                <td class="himapf-col">13</td>
+                <td class="himapf-col best-iu">220</td>
+                <td>17</td>
+                <td>555</td>
+                <td>18</td>
+                <td>475</td>
+                <td>40</td>
+                <td>892</td>
+              </tr>
+              <tr>
+                <td class="agents-col">Test 5</td>
+                <td class="himapf-col">12</td>
+                <td class="himapf-col best-iu">179</td>
+                <td>10</td>
+                <td>290</td>
+                <td>21</td>
+                <td>421</td>
+                <td>18</td>
+                <td>405</td>
+              </tr>
+              <tr style="background:#f1f3f5; font-weight:600; border-top:2px solid var(--border);">
+                <td class="agents-col">Avg</td>
+                <td class="himapf-col">12.2</td>
+                <td class="himapf-col best-iu">199</td>
+                <td>13.6</td>
+                <td>447</td>
+                <td>19.4</td>
+                <td>455</td>
+                <td>21.8</td>
+                <td>482</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Aggregate execution results -->
+      <div class="map-card">
+        <div class="map-header">
+          <div>
+            <h3>Hardware Execution Results (Average across 5 tests)</h3>
+            <div class="map-desc">Physical execution metrics on TurtleBot4 robots including wall-clock time</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr class="alg-group">
+                <th class="col-agents">Algorithm</th>
+                <th>Avg Makespan (steps)</th>
+                <th>Planning IU</th>
+                <th>IU Multiplier</th>
+                <th>Execution Time (s)</th>
+                <th>Avg Pos Error (cm)</th>
+                <th>Avg Distance (m)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:rgba(26,26,46,0.04);font-weight:600;">
+                <td class="agents-col">HI-MAPF ★</td>
+                <td>12.2</td>
+                <td class="best-iu">199</td>
+                <td><strong>1.0×</strong></td>
+                <td>181.5</td>
+                <td>1.49</td>
+                <td>3.91</td>
+              </tr>
+              <tr>
+                <td class="agents-col">MAPF-GPT-2M</td>
+                <td>13.6</td>
+                <td>447</td>
+                <td>2.2×</td>
+                <td>176.2</td>
+                <td>1.17</td>
+                <td>4.27</td>
+              </tr>
+              <tr>
+                <td class="agents-col">DCC</td>
+                <td>19.4</td>
+                <td>455</td>
+                <td>2.3×</td>
+                <td>235.0</td>
+                <td>1.31</td>
+                <td>4.33</td>
+              </tr>
+              <tr>
+                <td class="agents-col">EPH</td>
+                <td>21.8</td>
+                <td>482</td>
+                <td>2.4×</td>
+                <td>234.9</td>
+                <td>1.27</td>
+                <td>4.96</td>
+              </tr>
+              <tr>
+                <td class="agents-col">SCRIMP</td>
+                <td>16.4</td>
+                <td style="color:var(--scrimp); font-weight:600;">42,413</td>
+                <td style="color:var(--scrimp); font-weight:600;">213.0×</td>
+                <td>211.2</td>
+                <td>1.26</td>
+                <td>4.88</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer style="text-align:center; padding:2rem; color:var(--text-secondary); font-size:0.85rem;">
+    <a href="index.html" style="color:var(--primary); text-decoration:none;">← Back to paper page</a>
+  </footer>
+</body>
+
+</html>
